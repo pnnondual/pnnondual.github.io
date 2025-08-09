@@ -23,6 +23,77 @@
 </head>
 <body class="antialiased">
   <div id="app" class="min-h-screen"></div>
+ <!-- === Firebase (compat) – init === -->
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+
+<script>
+// Your live Firebase config (Storage not required; safe to keep field)
+const firebaseConfig = {
+  apiKey: "AIzaSyBaQZHfKTkNfW2KbTddAKHpyONe5LYggCg",
+  authDomain: "njpourdigital.firebaseapp.com",
+  projectId: "njpourdigital",
+  storageBucket: "njpourdigital.appspot.com",
+  messagingSenderId: "1051603009673",
+  appId: "1:1051603009673:web:0449a778a82a7b3e2a4658"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Expose Firebase handles to your React code
+window.__fb = {
+  app: firebase.app(),
+  auth: firebase.auth(),
+  db: firebase.firestore(),
+};
+
+// Optional: enable offline cache (ok if it fails)
+window.__fb.db.enablePersistence?.().catch(()=>{});
+
+// Complete email-link login if user opened from email
+if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+  const email = localStorage.getItem('adminEmail') || prompt('Confirm your email');
+  firebase.auth().signInWithEmailLink(email, window.location.href)
+    .then(() => location.replace(location.origin + '/?admin=1'))
+    .catch(console.warn);
+}
+</script>
+
+<!-- Admin gate UI (login with magic link) -->
+<script type="text/babel">
+function AdminGate({ children }) {
+  const [user, setUser] = React.useState(null);
+  const [checking, setChecking] = React.useState(true);
+  React.useEffect(() => window.__fb.auth.onAuthStateChanged(u => { setUser(u); setChecking(false); }), []);
+  if (checking) return <div className="p-6">Checking admin status…</div>;
+  if (!user) return <AdminLogin />;
+  return children;
+}
+function AdminLogin() {
+  const [email, setEmail] = React.useState("");
+  const sendLink = async () => {
+    const settings = { url: location.origin + "/?admin=1", handleCodeInApp: true };
+    localStorage.setItem('adminEmail', email);
+    await window.__fb.auth.sendSignInLinkToEmail(email, settings);
+    alert("Check your email for the sign-in link.");
+  };
+  return (
+    <div className="p-6 max-w-md mx-auto bg-white rounded-xl">
+      <h2 className="text-xl font-bold mb-2">Admin sign-in</h2>
+      <p className="text-sm text-gray-500 mb-3">Enter your email to receive a one-click login link.</p>
+      <input className="input mb-3 w-full" placeholder="you@njpourdigital.com"
+             value={email} onChange={e=>setEmail(e.target.value)} />
+      <button className="w-full bg-[#d4af37] hover:bg-[#e6c85c] text-black font-bold py-2 rounded-xl"
+              onClick={sendLink}>Send magic link</button>
+    </div>
+  );
+}
+</script>
+<!-- === /Firebase init + Admin gate === -->
+
+  
   <script type="text/babel">
     const {useState,useEffect}=React;
     const Section=({id,title,children})=>(
