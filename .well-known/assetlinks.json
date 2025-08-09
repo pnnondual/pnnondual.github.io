@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.netlify.app_6896c492d151dbbc073e6f72__snazzy_buttercream_9aa5f3.twa",
+      "sha256_cert_fingerprints": [
+        "F0:84:0D:4A:AE:39:1B:44:53:94:68:1E:D4:5A:E7:3D:77:63:DF:07:6E:5B:08:F0:3C:7C:06:CC:98:3B:45:AA"
+      ]
+    }
+  }
+]
