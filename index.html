@@ -128,6 +128,42 @@
       </div>);
     }
     ReactDOM.createRoot(document.getElementById("app")).render(<App/>);
-  </script>
-</body>
+ <!-- === Firebase (compat SDK) – drop-in init === -->
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-messaging-compat.js"></script>
+
+<script>
+     // Your live config
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-messaging-compat.js"></script>
+
+    <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaQZHfKTkNfW2KbTddAKHpyONe5LYggCg",
+      authDomain: "njpourdigital.firebaseapp.com",
+      projectId: "njpourdigital",
+      storageBucket: "njpourdigital.firebasestorage.app",
+      messagingSenderId: "1051603009673",
+      appId: "1:1051603009673:web:0449a778a82a7b3e2a4658"
+    };
+
+    // Initialize Firebase (compat = simple global 'firebase' object)
+    firebase.initializeApp(firebaseConfig);
+
+    // Prepare Firestore/Auth handles for later use
+    window.__fb = {
+      app: firebase.app(),
+      auth: firebase.auth(),
+      db: firebase.firestore(),
+    };
+
+    // Optional: enable Firestore offline cache (safe if it fails)
+    window.__fb.db.enablePersistence().catch(function() {});
+    </script>
+    <!-- === /Firebase init === -->
+  </body>
 </html>
