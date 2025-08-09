@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "NJPourDigital",
+  "short_name": "NJPourDigital",
+  "description": "AI-powered digital marketing portfolio for NJ retail liquor stores.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "https://i.ibb.co/RkBKfX4m/logo-square.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "https://i.ibb.co/RkBKfX4m/logo-square.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "https://i.ibb.co/RkBKfX4m/logo-square.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "https://i.ibb.co/RkBKfX4m/logo-square.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
