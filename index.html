@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>NJPourDigital • AI-Powered Marketing Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="AI-powered digital marketing portfolio for NJ retail liquor stores." />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <link rel="icon" href="https://i.ibb.co/RkBKfX4m/logo-square.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="https://i.ibb.co/RkBKfX4m/logo-square.png" />
+  <link rel="manifest" href="/manifest.webmanifest">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>html,body,#app{height:100%}body{background:#0a0a0a;color:#e5e7eb}.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px}</style>
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(()=>{});
+    }
+  </script>
+</head>
+<body class="antialiased">
+  <div id="app" class="min-h-screen"></div>
+  <script type="text/babel">
+    const {useState,useEffect}=React;
+    const Section=({id,title,children})=>(
+      <section id={id} className="py-14 px-5 max-w-6xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-semibold text-white mb-6">{title}</h2>
+        <div className="text-gray-300">{children}</div>
+      </section>
+    );
+    const Stat=({label,value})=>(
+      <div className="card rounded-2xl p-5 text-center"><div className="text-3xl font-bold text-white">{value}</div><div className="text-sm text-gray-400 mt-1">{label}</div></div>
+    );
+    const ServiceCard=({title,desc,bullets=[]})=>(
+      <div className="card rounded-2xl p-6"><h3 className="text-xl font-semibold text-white">{title}</h3><p className="text-gray-300 mt-2">{desc}</p>
+        {!!bullets.length&&<ul className="mt-4 space-y-2 list-disc list-inside text-gray-300">{bullets.map((b,i)=><li key={i}>{b}</li>)}</ul>}
+      </div>
+    );
+    function ContactForm(){
+      const [status,setStatus]=useState(null);const [loading,setLoading]=useState(false);
+      const queueViaSW=p=>navigator.serviceWorker?.controller?.postMessage({type:"queueForm",payload:p});
+      const onSubmit=async e=>{e.preventDefault();setLoading(true);setStatus(null);
+        const payload=Object.fromEntries(new FormData(e.currentTarget).entries());
+        try{
+          const r=await fetch("https://formspree.io/f/mgvzpjge",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+          if(r.ok){setStatus({ok:true,msg:"Thanks! We'll get back to you within 24–48 hours."});e.currentTarget.reset();}else throw new Error();
+        }catch{
+          queueViaSW(payload);try{const reg=await navigator.serviceWorker.ready;reg.sync&&await reg.sync.register("sync-contact");}catch{}
+          setStatus({ok:true,msg:"You're offline. We queued your message and will send it automatically."});
+        }finally{setLoading(false);}
+      };
+      useEffect(()=>{(async()=>{try{const reg=await navigator.serviceWorker.ready;reg.periodicSync&&await reg.periodicSync.register("njpd-periodic",{minInterval:86400000});}catch{}})();},[]);
+      return (<form onSubmit={onSubmit} className="card rounded-2xl p-6 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input required name="name" placeholder="Your name" className="bg-black/40 border border-white/10 rounded-xl p-3 text-white placeholder-gray-400 outline-none"/>
+          <input required type="email" name="email" placeholder="Email" className="bg-black/40 border border-white/10 rounded-xl p-3 text-white placeholder-gray-400 outline-none"/>
+        </div>
+        <input name="company" placeholder="Company" className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white placeholder-gray-400 outline-none"/>
+        <textarea required name="message" placeholder="Tell us what you need" className="w-full h-28 bg-black/40 border border-white/10 rounded-xl p-3 text-white placeholder-gray-400 outline-none"></textarea>
+        <button type="submit" disabled={loading} className="w-full md:w-auto inline-flex items-center justify-center px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white font-medium">{loading?"Sending...":"Send message"}</button>
+        {status&&<p className={"text-sm mt-2 "+(status.ok?"text-emerald-400":"text-rose-400")}>{status.msg}</p>}
+      </form>);
+    }
+    function App(){
+      return (<div className="min-h-screen bg-[radial-gradient(1200px_600px_at_50%_-50%,rgba(99,102,241,0.25),transparent)]">
+        <header className="sticky top-0 z-20 backdrop-blur bg-black/40 border-b border-white/10">
+          <div className="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img src="https://i.ibb.co/RkBKfX4m/logo-square.png" alt="NJPourDigital" className="w-9 h-9 rounded-xl"/>
+              <div><h1 className="text-white font-semibold leading-tight">NJPourDigital</h1><p className="text-xs text-gray-400">Where Spirit Meets Digital Intelligence</p></div>
+            </div>
+            <nav className="hidden md:flex items-center gap-6 text-sm text-gray-300">
+              <a href="#services" className="hover:text-white">Services</a>
+              <a href="#work" className="hover:text-white">Work</a>
+              <a href="#about" className="hover:text-white">About</a>
+              <a href="#contact" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white">Contact</a>
+            </nav>
+          </div>
+        </header>
+        <section className="px-5 pt-12 pb-10 md:pt-16 md:pb-14 max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 className="text-3xl md:text-5xl font-semibold text-white leading-tight">AI-Powered Marketing for <span className="text-indigo-400">NJ Liquor Stores</span></h2>
+            <p className="mt-4 text-gray-300">48-hour turnaround. Hyperlocal content. Guaranteed NJ ABC compliance.</p>
+            <div className="mt-6 flex gap-3">
+              <a href="#contact" className="px-5 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-medium">Get a Quote</a>
+              <a href="#work" className="px-5 py-3 rounded-xl border border-white/10 hover:bg-white/10 text-white font-medium">See Work</a>
+            </div>
+          </div>
+          <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/40">
+            <img src="https://i.ibb.co/1YkR7Fdb/real-splash-wwith-logo-2.png" alt="NJPourDigital Showcase" className="w-full h-full object-cover" loading="lazy"/>
+          </div>
+        </section>
+        <section className="px-5 max-w-6xl mx-auto pb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Stat label="Avg. Turnaround" value="48 hrs"/>
+            <Stat label="Compliance Incidents" value="0"/>
+            <Stat label="Monthly Creatives" value="200+"/>
+            <Stat label="Avg. CPM Lift" value="▲ 32%"/>
+          </div>
+        </section>
+        <Section id="services" title="Services">
+          <div className="grid md:grid-cols-3 gap-5">
+            <ServiceCard title="AI Video Production" desc="High-volume short-form ads tailored to your local audience." bullets={["Script + voiceover","On-brand captions","Export-ready assets"]}/>
+            <ServiceCard title="Social Media Management" desc="Daily posts, comment handling, and promo scheduling that stays compliant." bullets={["Content calendar","Engagement playbooks","Performance reporting"]}/>
+            <ServiceCard title="Web & App" desc="Quick storefront sites and white-label mobile apps with push promos." bullets={["PWA storefronts","Push notifications","Loyalty + coupons"]}/>
+          </div>
+        </Section>
+        <Section id="work" title="Recent Work">
+          <div className="grid md:grid-cols-3 gap-5">
+            {["Hyperlocal Reel","Compliance Explainer","New Arrival Spotlight"].map((t,i)=>(
+              <div key={i} className="card rounded-2xl overflow-hidden">
+                <div className="aspect-video bg-black/40 grid place-items-center">
+                  <img src="https://i.ibb.co/RkBKfX4m/logo-square.png" alt="thumb" className="w-14 h-14 rounded-xl opacity-80"/>
+                </div>
+                <div className="p-4"><h3 className="text-white font-medium">{t}</h3>
+                  <p className="text-gray-400 text-sm mt-1">Short-form ad package with captions, VO, and delivery files.</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+        <Section id="about" title="About NJPourDigital"><p>We’re a one-person AI marketing studio focused on New Jersey liquor retailers. The promise: fast delivery, measurable results, and airtight compliance.</p></Section>
+        <Section id="contact" title="Contact"><ContactForm/><p className="text-xs text-gray-500 mt-3">By submitting, you agree to be contacted about services. We don’t sell your data.</p></Section>
+        <footer className="py-10 text-center text-gray-500"><p className="text-sm">&copy; {new Date().getFullYear()} NJPourDigital. All rights reserved.</p></footer>
+      </div>);
+    }
+    ReactDOM.createRoot(document.getElementById("app")).render(<App/>);
+  </script>
+</body>
+</html>
