@@ -236,52 +236,70 @@ function AdminLogin() {
     window.__fb.db.enablePersistence().catch(function() {});
     </script>
     <!-- === /Firebase init === -->
- <!-- === Firebase (compat) init + admin login helper === -->
+ <!-- === Firebase (compat) init + admin login helper [KNOWN-GOOD] === -->
 <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
 
 <script>
-  // LIVE config (Storage not used; safe to keep field)
-  const firebaseConfig = {
-    apiKey: "AIzaSyBaQZHfKTkNfW2KbTddAKHpyONe5LYggCg",
-    authDomain: "njpourdigital.firebaseapp.com",
-    projectId: "njpourdigital",
-    storageBucket: "njpourdigital.appspot.com",
-    messagingSenderId: "1051603009673",
-    appId: "1:1051603009673:web:0449a778a82a7b3e2a4658"
-  };
-
-  // Init + expose
-  firebase.initializeApp(firebaseConfig);
-  window.__fb = { app: firebase.app(), auth: firebase.auth(), db: firebase.firestore() };
-  window.__fb.db.enablePersistence?.().catch(()=>{});
-
-  // Complete email-link login if opened from email
-  if (firebase.auth().isSignInWithEmailLink(location.href)) {
-    const email = localStorage.getItem('adminEmail') || prompt('Confirm your admin email');
-    firebase.auth().signInWithEmailLink(email, location.href)
-      .then(()=> location.replace(location.origin + '/?admin=1'))
-      .catch(console.warn);
-  }
-
-  // EASY ADMIN LOGIN TRIGGER (no UI edits): visit ?login=1 to send magic link
   (function () {
     try {
+      // Config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBaQZHfKTkNfW2KbTddAKHpyONe5LYggCg",
+        authDomain: "njpourdigital.firebaseapp.com",
+        projectId: "njpourdigital",
+        storageBucket: "njpourdigital.appspot.com", // not used, safe to keep
+        messagingSenderId: "1051603009673",
+        appId: "1:1051603009673:web:0449a778a82a7b3e2a4658"
+      };
+
+      // Init safely (avoid double init)
+      if (!window.firebase || !firebase?.initializeApp) {
+        console.error("Firebase SDK not loaded");
+        return;
+      }
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
+      // Expose handles
+      window.__fb = {
+        app: firebase.app(),
+        auth: firebase.auth(),
+        db: firebase.firestore(),
+      };
+
+      // Offline cache (ignore if fails)
+      if (window.__fb.db.enablePersistence) {
+        window.__fb.db.enablePersistence().catch(()=>{});
+      }
+
+      // Complete email-link login if user opened from email
+      if (firebase.auth().isSignInWithEmailLink(location.href)) {
+        const email = localStorage.getItem('adminEmail') || prompt('Confirm your admin email');
+        firebase.auth().signInWithEmailLink(email, location.href)
+          .then(()=> location.replace(location.origin + '/?admin=1'))
+          .catch(console.warn);
+      }
+
+      // EASY ADMIN LOGIN TRIGGER: visit ?login=1 to send magic link (no UI edits)
       const q = new URLSearchParams(location.search);
       if (q.get('login') === '1') {
         const email = localStorage.getItem('adminEmail') || prompt('Enter admin email:');
-        if (!email) return;
-        localStorage.setItem('adminEmail', email);
-        const settings = { url: location.origin + '/?admin=1', handleCodeInApp: true };
-        firebase.auth().sendSignInLinkToEmail(email, settings)
-          .then(()=> alert('Magic sign-in link sent. Check your email.'))
-          .catch(err => alert('Could not send link: ' + err.message));
+        if (email) {
+          localStorage.setItem('adminEmail', email);
+          const settings = { url: location.origin + '/?admin=1', handleCodeInApp: true };
+          firebase.auth().sendSignInLinkToEmail(email, settings)
+            .then(()=> alert('Magic sign-in link sent. Check your email.'))
+            .catch(err => alert('Could not send link: ' + err.message));
+        }
       }
-    } catch (e) { console.warn(e); }
+    } catch (e) {
+      console.error("Firebase init error:", e);
+    }
   })();
 </script>
 <!-- === /Firebase init === -->
+
 
 
 </body>
