@@ -300,6 +300,14 @@ function AdminLogin() {
 </script>
 <!-- === /Firebase init === -->
 
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(list => Promise.all(list.map(r => r.unregister())))
+      .then(() => caches?.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))))
+      .then(() => console.log('All SWs unregistered, caches cleared'));
+  }
+</script>
 
 
 </body>
