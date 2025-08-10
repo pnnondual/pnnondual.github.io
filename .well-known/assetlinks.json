@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.pnnondual.twa",
-        "sha256_cert_fingerprints": ["EE:15:E8:4E:46:57:A7:6E:4C:9B:EE:0B:9E:E6:71:5D:08:EF:62:81:F5:2F:F7:BA:FC:94:F0:55:FA:38:6F:E0"]
-      }
-    }]
